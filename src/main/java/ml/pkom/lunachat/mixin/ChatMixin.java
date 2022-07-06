@@ -2,6 +2,8 @@ package ml.pkom.lunachat.mixin;
 
 import com.github.ucchyocean.lc3.japanize.IMEConverter;
 import com.github.ucchyocean.lc3.japanize.YukiKanaConverter;
+import net.minecraft.server.filter.FilteredMessage;
+import net.minecraft.server.filter.TextStream;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,30 +17,29 @@ public class ChatMixin {
     private static boolean PROCESSED = false;
 
     @Inject(method = "filterText(Ljava/lang/String;Ljava/util/function/Consumer;)V", at = @At("HEAD"), cancellable = true)
-    private void filterText(String text, Consumer<String> consumer, CallbackInfo ci) {
+    private void filterText(String text, Consumer<FilteredMessage<String>> consumer, CallbackInfo ci) {
         if (PROCESSED) {
             PROCESSED = false;
             return;
         } else {
             PROCESSED = true;
         }
-        ServerPlayNetworkHandler handler = ((ServerPlayNetworkHandler)(Object)this);
-        ServerPlayNetworkHandlerAccessor handlerAccessor = ((ServerPlayNetworkHandlerAccessor)(Object)this);
+        ServerPlayNetworkHandlerAccessor handlerAccessor = ((ServerPlayNetworkHandlerAccessor) this);
         if (text.startsWith("#")) {
             text = text.substring(1);
-            handlerAccessor.invokeFilterText(text, consumer);
+            handlerAccessor.invokeFilterText(replacer(text), consumer, TextStream::filterText);
             ci.cancel();
             return;
         }
 
         if (containsUnicode(text)) {
-            handlerAccessor.invokeFilterText(replacer(text), consumer);
+            handlerAccessor.invokeFilterText(replacer(text), consumer, TextStream::filterText);
             ci.cancel();
             return;
         }
 
         text = text + " &6(" + IMEConverter.convByGoogleIME(YukiKanaConverter.conv(replacerSys(text))) + ")";
-        handlerAccessor.invokeFilterText(replacer(text), consumer);
+        handlerAccessor.invokeFilterText(replacer(text), consumer, TextStream::filterText);
         ci.cancel();
     }
 

@@ -8,9 +8,6 @@
     "Pitan"
   ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/rubycraft-p",
-    "sources": "https://github.com/PTOM76/RubyCraft",
-    "issues": "https://github.com/PTOM76/RubyCraft/issues"
   },
 
   "license": "MIT",
@@ -31,8 +28,5 @@
     "fabricloader": "*",
     "fabric": "*",
     "minecraft": "*"
-  },
-  "suggests": {
-    "another-mod": "*"
   }
 }
