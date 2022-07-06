@@ -14,16 +14,9 @@ import java.util.function.Consumer;
 
 @Mixin(ServerPlayNetworkHandler.class)
 public class ChatMixin {
-    private static boolean PROCESSED = false;
 
     @Inject(method = "filterText(Ljava/lang/String;Ljava/util/function/Consumer;)V", at = @At("HEAD"), cancellable = true)
     private void filterText(String text, Consumer<FilteredMessage<String>> consumer, CallbackInfo ci) {
-        if (PROCESSED) {
-            PROCESSED = false;
-            return;
-        } else {
-            PROCESSED = true;
-        }
         ServerPlayNetworkHandlerAccessor handlerAccessor = ((ServerPlayNetworkHandlerAccessor) this);
         if (text.startsWith("#")) {
             text = text.substring(1);
