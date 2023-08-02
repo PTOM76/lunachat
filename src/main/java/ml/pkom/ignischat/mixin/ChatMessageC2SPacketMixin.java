@@ -17,7 +17,7 @@ public class ChatMessageC2SPacketMixin {
     @Shadow @Final private String chatMessage;
 
     // 通常のチャットの処理メソッド
-    @Inject(method = "getChatMessage", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "chatMessage", at = @At("HEAD"), cancellable = true)
     private void inject_handleMessage(CallbackInfoReturnable<String> cir) {
 
         if (chatMessage == null) return;
